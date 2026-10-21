@@ -1,8 +1,10 @@
 # Usa o servidor web Nginx super leve
 FROM nginx:alpine
 
-# Copia o arquivo HTML para a pasta pública do Nginx
+# Copia os arquivos da interface e a configuração de proxy da API
 COPY index.html /usr/share/nginx/html/index.html
+COPY app.js /usr/share/nginx/html/app.js
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expõe a porta 80 do contêiner
 EXPOSE 80

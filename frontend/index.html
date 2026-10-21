@@ -5,32 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador Léxico - Python</title>
     <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; margin: 0; }
-        .container { text-align: center; padding: 40px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h1 { color: #333; }
-        #mensagem { margin-top: 20px; padding: 15px; font-weight: bold; color: #2ecc71; background-color: #e8f8f5; border-radius: 5px; }
+        :root { color-scheme: light; font-family: Arial, sans-serif; color: #172033; background: #f3f6fb; }
+        * { box-sizing: border-box; }
+        body { min-width: 320px; min-height: 100vh; margin: 0; padding: 40px 20px; }
+        main { width: min(100%, 960px); margin: 0 auto; }
+        header { margin-bottom: 24px; }
+        .eyebrow { margin: 0 0 8px; color: #3158a6; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+        h1 { margin: 0; font-size: clamp(1.8rem, 5vw, 2.5rem); }
+        header p:last-child { color: #526078; line-height: 1.6; }
+        .panel { padding: 24px; border: 1px solid #dce3ef; border-radius: 12px; background: #fff; box-shadow: 0 8px 24px rgb(30 50 90 / 7%); }
+        .controls { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; margin-bottom: 16px; }
+        .example-control { flex: 1 1 260px; }
+        label { display: block; margin-bottom: 8px; font-weight: 700; }
+        select, textarea { width: 100%; border: 1px solid #b8c4d6; border-radius: 7px; color: inherit; font: inherit; }
+        select { min-height: 42px; padding: 8px 10px; background: #fff; }
+        textarea { min-height: 300px; padding: 14px; resize: vertical; background: #fbfcff; font-family: Consolas, "Courier New", monospace; font-size: 0.95rem; line-height: 1.6; tab-size: 4; }
+        select:focus, textarea:focus, button:focus-visible { outline: 3px solid #a9c4ff; outline-offset: 2px; }
+        .hint { margin: 8px 0 18px; color: #526078; font-size: 0.9rem; line-height: 1.5; }
+        button { min-height: 42px; padding: 10px 18px; border: 0; border-radius: 7px; background: #2456b3; color: #fff; cursor: pointer; font: inherit; font-weight: 700; }
+        button:hover { background: #19448f; }
+        button:disabled { cursor: wait; opacity: 0.65; }
+        .results { margin-top: 20px; padding: 16px; border-radius: 8px; background: #f3f6fb; }
+        .results h2 { margin: 0 0 8px; font-size: 1rem; }
+        #resultado { min-height: 1.5em; margin: 0; line-height: 1.5; }
+        #resultado[data-state="success"] { color: #17633c; }
+        #resultado[data-state="error"] { color: #a12a2a; }
+        #resultado[data-state="pending"] { color: #526078; }
+        @media (max-width: 600px) {
+            body { padding: 24px 14px; }
+            .panel { padding: 18px; }
+            textarea { min-height: 240px; }
+            .controls button { width: 100%; }
+        }
     </style>
+    <script src="/app.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Simulador Léxico</h1>
-        <p>Aguardando resposta do servidor...</p>
-        <div id="mensagem">Carregando...</div>
-    </div>
+    <main>
+        <header>
+            <p class="eyebrow">Ferramenta educacional</p>
+            <h1>Simulador Léxico — Python</h1>
+            <p>Escreva ou escolha um pequeno programa e envie-o para o sistema. Nesta etapa, o servidor confirma o recebimento; a análise léxica será adicionada posteriormente.</p>
+        </header>
 
-    <script>
-        // Faz a requisição para o backend assim que a página carrega
-        fetch('http://localhost:5000/api/hello')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('mensagem').innerText = data.message;
-                document.querySelector('p').innerText = "Comunicação Frontend ↔ Backend estabelecida!";
-            })
-            .catch(error => {
-                document.getElementById('mensagem').innerText = "Erro ao conectar com o Backend.";
-                document.getElementById('mensagem').style.color = "red";
-                console.error('Erro:', error);
-            });
-    </script>
+        <section class="panel" aria-labelledby="editor-titulo">
+            <h2 id="editor-titulo">Código-fonte</h2>
+            <form id="formulario">
+                <div class="controls">
+                    <div class="example-control">
+                        <label for="exemplo">Carregar exemplo</label>
+                        <select id="exemplo">
+                            <option value="">Escolha um exemplo...</option>
+                            <option value="variavel">Variável e saída</option>
+                            <option value="aritmetica">Operação aritmética</option>
+                            <option value="condicional">Estrutura condicional</option>
+                        </select>
+                    </div>
+                    <button id="enviar" type="submit">Solicitar processamento</button>
+                </div>
+
+                <label for="codigo">Edite o código antes de enviar</label>
+                <textarea id="codigo" name="codigo" spellcheck="false" placeholder="Digite ou cole seu código Python aqui..." aria-describedby="ajuda"></textarea>
+                <p class="hint" id="ajuda">O conteúdo é tratado como texto. A análise do programa será desenvolvida em uma próxima etapa.</p>
+            </form>
+
+            <section class="results" aria-labelledby="resultado-titulo">
+                <h2 id="resultado-titulo">Resultado</h2>
+                <p id="resultado" data-state="idle" role="status" aria-live="polite">A resposta do servidor aparecerá aqui.</p>
+            </section>
+        </section>
+    </main>
 </body>
 </html>
