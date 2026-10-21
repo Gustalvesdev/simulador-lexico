@@ -1,0 +1,8 @@
+# Usa o servidor web Nginx super leve
+FROM nginx:alpine
+
+# Copia o arquivo HTML para a pasta pública do Nginx
+COPY index.html /usr/share/nginx/html/index.html
+
+# Expõe a porta 80 do contêiner
+EXPOSE 80

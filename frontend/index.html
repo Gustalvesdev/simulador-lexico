@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Léxico - Python</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; margin: 0; }
+        .container { text-align: center; padding: 40px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        #mensagem { margin-top: 20px; padding: 15px; font-weight: bold; color: #2ecc71; background-color: #e8f8f5; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simulador Léxico</h1>
+        <p>Aguardando resposta do servidor...</p>
+        <div id="mensagem">Carregando...</div>
+    </div>
+
+    <script>
+        // Faz a requisição para o backend assim que a página carrega
+        fetch('http://localhost:5000/api/hello')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('mensagem').innerText = data.message;
+                document.querySelector('p').innerText = "Comunicação Frontend ↔ Backend estabelecida!";
+            })
+            .catch(error => {
+                document.getElementById('mensagem').innerText = "Erro ao conectar com o Backend.";
+                document.getElementById('mensagem').style.color = "red";
+                console.error('Erro:', error);
+            });
+    </script>
+</body>
+</html>
