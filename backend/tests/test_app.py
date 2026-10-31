@@ -15,13 +15,48 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Hello, World!", response.get_json()["message"])
 
-    def test_valid_code_is_acknowledged_without_analysis(self):
-        response = self.client.post("/api/analisar", json={"codigo": "numero = 10"})
+    def test_valid_code_returns_tokenized_result(self):
+        response = self.client.post(
+            "/api/analisar",
+            json={"codigo": "numero = 10"},
+        )
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.get_json(),
-            {"mensagem": "Código recebido com sucesso.", "recebido": True},
+            {
+                "sucesso": True,
+                "tokens": [
+                    {"tipo": "IDENTIFICADOR", "lexema": "numero", "linha": 1, "coluna": 1},
+                    {"tipo": "OPERADOR_ATRIBUICAO", "lexema": "=", "linha": 1, "coluna": 8},
+                    {"tipo": "LITERAL_INTEIRO", "lexema": "10", "linha": 1, "coluna": 10},
+                ],
+                "erros": [],
+            },
+        )
+
+    def test_lexical_error_returns_partial_tokens_and_errors(self):
+        response = self.client.post(
+            "/api/analisar",
+            json={"codigo": "valor = 1 @ outro"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        result = response.get_json()
+        self.assertFalse(result["sucesso"])
+        self.assertEqual(
+            [token["lexema"] for token in result["tokens"]],
+            ["valor", "=", "1", "outro"],
+        )
+        self.assertEqual(
+            result["erros"],
+            [{
+                "tipo": "ERRO_LEXICO",
+                "lexema": "@",
+                "linha": 1,
+                "coluna": 11,
+                "mensagem": "Caractere não reconhecido: '@'.",
+            }],
         )
 
     def test_empty_code_is_rejected(self):

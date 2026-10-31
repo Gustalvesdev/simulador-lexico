@@ -31,6 +31,16 @@
         #resultado[data-state="success"] { color: #17633c; }
         #resultado[data-state="error"] { color: #a12a2a; }
         #resultado[data-state="pending"] { color: #526078; }
+        .analysis-section { margin-top: 18px; }
+        .analysis-section h3 { margin: 0 0 10px; font-size: 1rem; }
+        .token-counts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; padding: 0; list-style: none; }
+        .token-counts li { padding: 6px 9px; border-radius: 999px; background: #e4ebf8; color: #253d6c; font-size: 0.85rem; }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; background: #fff; text-align: left; }
+        th, td { padding: 9px 10px; border-bottom: 1px solid #dce3ef; vertical-align: top; }
+        th { color: #34425c; font-size: 0.85rem; }
+        td { font-family: Consolas, "Courier New", monospace; font-size: 0.9rem; }
+        .errors-list { margin: 0; padding-left: 22px; color: #a12a2a; line-height: 1.6; }
         @media (max-width: 600px) {
             body { padding: 24px 14px; }
             .panel { padding: 18px; }
@@ -45,7 +55,7 @@
         <header>
             <p class="eyebrow">Ferramenta educacional</p>
             <h1>Simulador Léxico — Python</h1>
-            <p>Escreva ou escolha um pequeno programa e envie-o para o sistema. Nesta etapa, o servidor confirma o recebimento; a análise léxica será adicionada posteriormente.</p>
+            <p>Escreva ou escolha um programa do subconjunto definido e observe como o scanner reconhece seus tokens. Um token é uma unidade classificada; o lexema é o texto encontrado no código.</p>
         </header>
 
         <section class="panel" aria-labelledby="editor-titulo">
@@ -66,12 +76,33 @@
 
                 <label for="codigo">Edite o código antes de enviar</label>
                 <textarea id="codigo" name="codigo" spellcheck="false" placeholder="Digite ou cole seu código Python aqui..." aria-describedby="ajuda"></textarea>
-                <p class="hint" id="ajuda">O conteúdo é tratado como texto. A análise do programa será desenvolvida em uma próxima etapa.</p>
+                <p class="hint" id="ajuda">Suporte atual: palavras-chave if/else/while/def, print, identificadores ASCII, inteiros, strings com aspas duplas, operadores, delimitadores e comentários #. A análise sintática ainda não é feita.</p>
             </form>
 
             <section class="results" aria-labelledby="resultado-titulo">
                 <h2 id="resultado-titulo">Resultado</h2>
                 <p id="resultado" data-state="idle" role="status" aria-live="polite">A resposta do servidor aparecerá aqui.</p>
+                <section id="tokens-section" class="analysis-section" aria-labelledby="tokens-titulo" hidden>
+                    <h3 id="tokens-titulo">Tokens encontrados</h3>
+                    <ul id="token-counts" class="token-counts" aria-label="Contagem de tokens por categoria"></ul>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tipo</th>
+                                    <th scope="col">Lexema</th>
+                                    <th scope="col">Linha</th>
+                                    <th scope="col">Coluna</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tokens-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+                <section id="errors-section" class="analysis-section" aria-labelledby="errors-titulo" hidden>
+                    <h3 id="errors-titulo">Erros léxicos</h3>
+                    <ul id="errors-list" class="errors-list"></ul>
+                </section>
             </section>
         </section>
     </main>

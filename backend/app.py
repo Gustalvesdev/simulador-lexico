@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from werkzeug.exceptions import InternalServerError
 
+from backend.lexer import tokenize
+
 app = Flask(__name__)
 CORS(app) # Permite que o frontend se comunique com o backend
 
@@ -26,9 +28,11 @@ def analisar():
     if not codigo.strip():
         return jsonify({"mensagem": "Informe um código-fonte antes de solicitar o processamento."}), 400
 
+    tokens, erros = tokenize(codigo)
     return jsonify({
-        "mensagem": "Código recebido com sucesso.",
-        "recebido": True,
+        "sucesso": not erros,
+        "tokens": tokens,
+        "erros": erros,
     })
 
 
